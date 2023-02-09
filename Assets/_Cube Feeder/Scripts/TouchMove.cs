@@ -1,8 +1,9 @@
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class TouchMove : MonoBehaviour
 {
-    bool EnableKeyboard = false;
     [SerializeField] bool IsJoystick = true;
     public static Vector3 MoveDir = Vector2.zero;
 
@@ -10,11 +11,10 @@ public class TouchMove : MonoBehaviour
 
     Vector2 startTouchPosition, currentPosition;
     bool stopTouch = false;
+    bool EnableKeyboard = false;
 
     public float swipeRange;
     public float tapRange;
-
-    public int FrameRate = 60;
 
     private void Start()
     {
@@ -27,8 +27,6 @@ public class TouchMove : MonoBehaviour
 
     private void Update()
     {
-        Application.targetFrameRate = FrameRate;
-
         if (EnableKeyboard)
         {
             // Keyboard Inputs
@@ -101,5 +99,4 @@ public class TouchMove : MonoBehaviour
             stopTouch = false;
         }
     }
-
 }

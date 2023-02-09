@@ -30,7 +30,6 @@ public class SnakeMovement : MonoBehaviour
 
 
     [Header("UI Stuff")]
-    [SerializeField] TextMeshProUGUI FpsText;
     [SerializeField] TextMeshProUGUI SnakeSize;
 
 
@@ -41,40 +40,35 @@ public class SnakeMovement : MonoBehaviour
     List<GameObject> BodyParts = new List<GameObject>();
     List<Vector3> PositionHistory = new List<Vector3>();
 
-    int snakeBodySize = 0;
+    public int snakeBodySize { get; private set; } = 0;
     bool isFirst = true;
 
     private void Start()
     {
-        //transform.position = new Vector3(11f, 0f, -7.5f);
-
         moveDirection = new Vector3Int(0, 0, 0); // Starting Directtion (x, y, z)
 
         GameObject body = Instantiate(HeadPrefab);
         BodyParts.Add(body);
-
-        PositionHistory.Insert(0, transform.position);
     }
 
     private void Update()
     {
-        int fpsVal = Mathf.RoundToInt((1 / Time.deltaTime));
-        FpsText.text = fpsVal.ToString();
-
         dir = TouchMove.MoveDir;
 
         if (dir.magnitude > 0.3f)
         {
             moveDirection = dir;
         }
-        
+
         ContinuousMovement();
         HandleBodyPartsMovement();
     }
 
+
     void ContinuousMovement()
     {
         transform.Translate(moveDirection * MoveSpeed * Time.deltaTime, Space.Self);
+        PositionHistory.Insert(0, transform.position);
         RaycastHit hit;
         if (Physics.Raycast(transform.position, transform.forward, out hit, raycastDistance, groundLayer))
         {
@@ -84,6 +78,8 @@ public class SnakeMovement : MonoBehaviour
             targetPosition += hit.normal * Depth;
             transform.position = targetPosition;
         }
+        else
+            Debug.Log("Not Collide");
     }
     
 
@@ -126,8 +122,9 @@ public class SnakeMovement : MonoBehaviour
     {
         newGapVal = GetGaps();
 
-        PositionHistory.Insert(0, transform.position);
+        //PositionHistory.Insert(0, transform.position);
         int index = 0;
+
         foreach (var body in BodyParts)
         {
             Vector3 point = PositionHistory[Mathf.Min(index * newGapVal, PositionHistory.Count - 1)];
@@ -156,12 +153,28 @@ public class SnakeMovement : MonoBehaviour
         else
         {
             body = Instantiate(BodyPrefab, NewBodyPoint, Quaternion.identity);
+            body.tag = "Body";
         }
         BodyParts.Add(body);
         snakeBodySize++;
 
         SnakeSize.text = snakeBodySize.ToString();
     }
+
+    public void DecreaseSnake()
+    {
+        if (BodyParts.Count > 1)
+        {
+            GameObject destroyBody = BodyParts[BodyParts.Count - 1];
+            BodyParts.Remove(destroyBody);
+            Destroy(destroyBody, 0.5f);
+            snakeBodySize--;
+            SnakeSize.text = snakeBodySize.ToString();
+            if (snakeBodySize <= 0)
+                isFirst = true;
+        }
+    }
+
 
     int GetGaps()
     {
