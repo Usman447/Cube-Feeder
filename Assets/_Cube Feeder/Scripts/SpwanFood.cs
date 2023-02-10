@@ -10,9 +10,15 @@ public class SpwanFood : MonoBehaviour
     public GameObject[] SimpleFood;
     public GameObject[] PowerFood;
 
-    public int StartingFood = 20;
+    public ushort StartingFood = 20;
     public float FoodDepth = 1;
     public LayerMask layer;
+
+    ushort currentFoods = 0;
+    ushort currentPowerFoods = 0;
+
+    ushort maxFoodCount = 0;
+    ushort maxPowerFoodCount = 0;
 
     Mesh mesh;
 
@@ -20,6 +26,11 @@ public class SpwanFood : MonoBehaviour
     {
         Physics.queriesHitBackfaces = true;
         mesh = MeshObject.GetComponent<MeshFilter>().sharedMesh;
+
+        maxFoodCount = (ushort)(StartingFood - 3);
+        maxPowerFoodCount = (ushort)(StartingFood - maxFoodCount);
+
+
         for (int i = 0; i < StartingFood; i++)
         {
             SpawnNewFood();
@@ -44,6 +55,7 @@ public class SpwanFood : MonoBehaviour
             food.transform.position = targetPosition;
         }
         food.transform.parent = transform;
+        
         yield return null;
     }
 
@@ -52,19 +64,29 @@ public class SpwanFood : MonoBehaviour
         Vector3 position = mesh.vertices[Random.Range(0, mesh.vertices.Length)];
         Vector3 normal = mesh.normals[Random.Range(0, mesh.vertices.Length)];
 
-        int randVal = Random.Range(1, 8);
-        if(randVal == 3)
+        GameObject food = null;
+
+        if(currentFoods < maxFoodCount)
         {
-            return Instantiate(PowerFood[0], position, Quaternion.FromToRotation(Vector3.forward, normal));
+            currentFoods++;
+            food = Instantiate(SimpleFood[Random.Range(0, SimpleFood.Length)], position, Quaternion.FromToRotation(Vector3.forward, normal));
         }
-        else if (randVal == 4)
+        else if(currentPowerFoods < maxPowerFoodCount)
         {
-            return Instantiate(PowerFood[1], position, Quaternion.FromToRotation(Vector3.forward, normal));
+            currentPowerFoods++;
+            food = Instantiate(PowerFood[Random.Range(0, PowerFood.Length)], position, Quaternion.FromToRotation(Vector3.forward, normal));
         }
-        else
-        {
-            return Instantiate(SimpleFood[Random.Range(0, SimpleFood.Length)], position, Quaternion.FromToRotation(Vector3.forward, normal));
-        }
+
+        return food;
     }
 
+    public void FoodEaten()
+    {
+        currentFoods--;
+    }
+
+    public void PowerFoodEaten()
+    {
+        currentPowerFoods--;
+    }
 }

@@ -37,7 +37,6 @@ public class TouchMove : MonoBehaviour
         }
         else
         {
-            // Touch Input
             //Swipe();
             JoystickHandler();
         }

@@ -8,9 +8,18 @@ public class GameManager : MonoBehaviour
 {
     public TextMeshProUGUI FpsText;
 
+    public bool isSnakeTransparent { get; private set; } = false;
+
+    public SnakeMovement snake { get; private set; }
+    public SpwanFood spawnFood { get; private set; }
+
     void Start()
     {
         Application.targetFrameRate = 60;
+
+        snake = FindObjectOfType<SnakeMovement>();
+        spawnFood = FindObjectOfType<SpwanFood>();
+
     }
 
 
@@ -21,11 +30,51 @@ public class GameManager : MonoBehaviour
     }
 
 
-    public void ApplyTransparancy(GameObject _body, bool isTransparent)
+
+    public void SnakeEatFood()
+    {
+        snake.AddSnakeBody();
+        if (spawnFood != null)
+            spawnFood.SpawnNewFood();
+    }
+
+    public void SnakeSizeDcrease()
+    {
+        if (!isSnakeTransparent)
+        {
+            snake.SubstractSnakeBody();
+        }
+        else
+        {
+            snake.AddSnakeBody();
+        }
+
+        if (spawnFood != null)
+            spawnFood.SpawnNewFood();
+    }
+
+    public void SnakeInvisiblity(Collider other)
+    {
+        if (!isSnakeTransparent)
+        {
+            Destroy(other.gameObject);
+            isSnakeTransparent = true;
+            snake.TransparentSnake();
+            Invoke(nameof(SnakeTransprencyRestore), 4f);
+        }
+    }
+
+    void SnakeTransprencyRestore()
+    {
+        isSnakeTransparent = false;
+        snake.TransparentSnake();
+    }
+
+    public void ApplyTransparancyOnBody(GameObject _body)
     {
         var material = _body.GetComponent<MeshRenderer>().material;
 
-        if (isTransparent)
+        if (isSnakeTransparent)
         {
             material.SetColor("_Color", new Color(1, 1, 1, 0));
             material.SetFloat("_Glossiness", 1f);
@@ -53,7 +102,5 @@ public class GameManager : MonoBehaviour
             material.DisableKeyword("_ALPHABLEND_ON");
             material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
         }
-
-
     }
 }

@@ -4,62 +4,42 @@ using UnityEngine;
 
 public class SnakeHead : MonoBehaviour
 {
-    SnakeMovement snake;
-    SpwanFood spawnFood;
-    bool isSnakeTransparent = false;
+    GameManager gameManager;
 
     private void Start()
     {
-        snake = FindObjectOfType<SnakeMovement>();
-        spawnFood = FindObjectOfType<SpwanFood>();
+        gameManager = FindObjectOfType<GameManager>();
     }
+
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Body") && !isSnakeTransparent)
+        if (other.CompareTag("Body") && !gameManager.isSnakeTransparent)
         {
-            Debug.Log("Die and size " + snake.snakeBodySize);
+            Debug.Log("Snake Die");
         }
 
         if (other.CompareTag("Food"))
         {
             Destroy(other.gameObject);
-            snake.GrowSnake();
-            if(spawnFood != null)
-                spawnFood.SpawnNewFood();
+            gameManager.SnakeEatFood();
+            gameManager.spawnFood.FoodEaten();
         }
-
 
         // Apply snake transparancy
         if (other.CompareTag("Invisible"))
         {
-            Debug.Log("Invisible");
-            if (!isSnakeTransparent)
-            {
-                Destroy(other.gameObject);
-                snake.TransparentSnake();
-                isSnakeTransparent = true;
-                Invoke(nameof(SnakeTransprencyRestore), 4f);
-            }
+            gameManager.SnakeInvisiblity(other);
+            gameManager.spawnFood.PowerFoodEaten();
         }
 
         // Destory last body part of the snake
         if (other.CompareTag("Decrease"))
         {
-            Debug.Log("Decrease");
             Destroy(other.gameObject);
-            if (!isSnakeTransparent)
-            {
-                snake.DecreaseSnake();
-                if (spawnFood != null)
-                    spawnFood.SpawnNewFood();
-            }
+            gameManager.SnakeSizeDcrease();
+            gameManager.spawnFood.PowerFoodEaten();
         }
     }
 
-    void SnakeTransprencyRestore()
-    {
-        snake.TransparentSnake();
-        isSnakeTransparent = false;
-    }
 }

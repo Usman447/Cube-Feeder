@@ -28,30 +28,28 @@ public class SnakeMovement : MonoBehaviour
     public UpAxis upAxis;
     public float Depth = 1;
 
-    bool ApplyTransparancy = true;
-
 
     [Header("UI Stuff")]
     [SerializeField] TextMeshProUGUI SnakeSize;
 
 
     // Private Variables
-    Vector3 moveDirection;
+    Vector3 moveDirection = Vector3.zero;
     Vector3 dir = Vector3.zero;
     List<GameObject> BodyParts = new List<GameObject>();
     List<Vector3> PositionHistory = new List<Vector3>();
     GameManager gameManager;
+    SnakeHead snakeHead;
 
     public int snakeBodySize { get; private set; } = 0;
     bool isFirst = true;
 
     private void Start()
     {
-        moveDirection = new Vector3Int(0, 0, 0); // Starting Directtion (x, y, z)
         gameManager = FindObjectOfType<GameManager>();
 
-
         GameObject body = Instantiate(HeadPrefab);
+        snakeHead = body.GetComponent<SnakeHead>();
         BodyParts.Add(body);
     }
 
@@ -141,20 +139,19 @@ public class SnakeMovement : MonoBehaviour
 
     public void TransparentSnake()
     {
-        StartCoroutine(Transparent());
+        StartCoroutine("Transparent");
     }
 
     IEnumerator Transparent()
     {
         for (int i = 1; i < BodyParts.Count; ++i)
         {
-            gameManager.ApplyTransparancy(BodyParts[i], ApplyTransparancy);
+            gameManager.ApplyTransparancyOnBody(BodyParts[i]);
             yield return null;
         }
-        ApplyTransparancy = !ApplyTransparancy;
     }
 
-    public void GrowSnake()
+    public void AddSnakeBody()
     {
         GameObject body;
         if (isFirst)
@@ -168,13 +165,15 @@ public class SnakeMovement : MonoBehaviour
             body = Instantiate(BodyPrefab, BodyParts[BodyParts.Count - 1].transform.position, Quaternion.identity);
             body.tag = "Body";
         }
+
+        gameManager.ApplyTransparancyOnBody(body);
+
         BodyParts.Add(body);
         snakeBodySize++;
-
         SnakeSize.text = snakeBodySize.ToString();
     }
 
-    public void DecreaseSnake()
+    public void SubstractSnakeBody()
     {
         if (BodyParts.Count > 1)
         {
