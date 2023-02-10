@@ -5,15 +5,18 @@ using UnityEngine;
 public class SnakeHead : MonoBehaviour
 {
     SnakeMovement snake;
+    SpwanFood spawnFood;
+    bool isSnakeTransparent = false;
 
     private void Start()
     {
         snake = FindObjectOfType<SnakeMovement>();
+        spawnFood = FindObjectOfType<SpwanFood>();
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Body"))
+        if (other.CompareTag("Body") && !isSnakeTransparent)
         {
             Debug.Log("Die and size " + snake.snakeBodySize);
         }
@@ -22,19 +25,41 @@ public class SnakeHead : MonoBehaviour
         {
             Destroy(other.gameObject);
             snake.GrowSnake();
-            SpwanFood spawnFood = FindObjectOfType<SpwanFood>();
             if(spawnFood != null)
                 spawnFood.SpawnNewFood();
         }
 
-        if (other.CompareTag("PowerFood"))
+
+        // Apply snake transparancy
+        if (other.CompareTag("Invisible"))
         {
-            Debug.Log("Its a power food");
-            Destroy(other.gameObject);
-            snake.DecreaseSnake();
-            SpwanFood spawnFood = FindObjectOfType<SpwanFood>();
-            if (spawnFood != null)
-                spawnFood.SpawnNewFood();
+            Debug.Log("Invisible");
+            if (!isSnakeTransparent)
+            {
+                Destroy(other.gameObject);
+                snake.TransparentSnake();
+                isSnakeTransparent = true;
+                Invoke(nameof(SnakeTransprencyRestore), 4f);
+            }
         }
+
+        // Destory last body part of the snake
+        if (other.CompareTag("Decrease"))
+        {
+            Debug.Log("Decrease");
+            Destroy(other.gameObject);
+            if (!isSnakeTransparent)
+            {
+                snake.DecreaseSnake();
+                if (spawnFood != null)
+                    spawnFood.SpawnNewFood();
+            }
+        }
+    }
+
+    void SnakeTransprencyRestore()
+    {
+        snake.TransparentSnake();
+        isSnakeTransparent = false;
     }
 }

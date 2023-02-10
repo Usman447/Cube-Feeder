@@ -33,7 +33,7 @@ RenderSettings:
   m_HaloTexture: {fileID: 0}
   m_SpotCookie: {fileID: 10001, guid: 0000000000000000e000000000000000, type: 0}
   m_DefaultReflectionMode: 0
-  m_DefaultReflectionResolution: 128
+  m_DefaultReflectionResolution: 16
   m_ReflectionBounces: 1
   m_ReflectionIntensity: 0
   m_CustomReflection: {fileID: 0}
@@ -1188,10 +1188,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MeshObject: {fileID: 1715004149}
-  SimpleFood: {fileID: 9151654924108440929, guid: b3c0b836b8ec6f84c9213b18bfe0418a, type: 3}
-  PowerFood: {fileID: 9151654924108440929, guid: c6d8dacdada1dcb4cb58f3d439b271c5, type: 3}
-  StartingFood: 20
-  FoodDepth: 0.35
+  SimpleFood:
+  - {fileID: 4073843520130786019, guid: e8a523211f9ca1e4588fbf8a0cbdf3e5, type: 3}
+  - {fileID: 3225225372990489587, guid: 910c8810f0e0a0848b7694206bb919fe, type: 3}
+  - {fileID: 3086494405311752210, guid: de9723fb0e12cc44ead5f3c83c3331c3, type: 3}
+  PowerFood:
+  - {fileID: 9151654924108440929, guid: b3c0b836b8ec6f84c9213b18bfe0418a, type: 3}
+  - {fileID: 9151654924108440929, guid: c6d8dacdada1dcb4cb58f3d439b271c5, type: 3}
+  StartingFood: 35
+  FoodDepth: 0.45
   layer:
     serializedVersion: 2
     m_Bits: 64
@@ -1205,7 +1210,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 5.03}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 7

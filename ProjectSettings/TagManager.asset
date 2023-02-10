@@ -7,7 +7,8 @@ TagManager:
   - Food
   - First
   - Body
-  - PowerFood
+  - Invisible
+  - Decrease
   layers:
   - Default
   - TransparentFX

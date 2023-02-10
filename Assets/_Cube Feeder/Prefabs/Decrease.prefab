@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 9151654924108440934}
   - component: {fileID: 9151654924108440935}
   - component: {fileID: 9151654924108440928}
-  m_Layer: 7
-  m_Name: Food
-  m_TagString: Food
+  m_Layer: 0
+  m_Name: Decrease
+  m_TagString: Decrease
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 126

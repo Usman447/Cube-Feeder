@@ -28,6 +28,8 @@ public class SnakeMovement : MonoBehaviour
     public UpAxis upAxis;
     public float Depth = 1;
 
+    bool ApplyTransparancy = true;
+
 
     [Header("UI Stuff")]
     [SerializeField] TextMeshProUGUI SnakeSize;
@@ -35,10 +37,10 @@ public class SnakeMovement : MonoBehaviour
 
     // Private Variables
     Vector3 moveDirection;
-    Vector3 NewBodyPoint;
     Vector3 dir = Vector3.zero;
     List<GameObject> BodyParts = new List<GameObject>();
     List<Vector3> PositionHistory = new List<Vector3>();
+    GameManager gameManager;
 
     public int snakeBodySize { get; private set; } = 0;
     bool isFirst = true;
@@ -46,6 +48,8 @@ public class SnakeMovement : MonoBehaviour
     private void Start()
     {
         moveDirection = new Vector3Int(0, 0, 0); // Starting Directtion (x, y, z)
+        gameManager = FindObjectOfType<GameManager>();
+
 
         GameObject body = Instantiate(HeadPrefab);
         BodyParts.Add(body);
@@ -55,7 +59,7 @@ public class SnakeMovement : MonoBehaviour
     {
         dir = TouchMove.MoveDir;
 
-        if (dir.magnitude > 0.3f)
+        if (dir.magnitude >= 0.999999f)
         {
             moveDirection = dir;
         }
@@ -121,24 +125,33 @@ public class SnakeMovement : MonoBehaviour
     void HandleBodyPartsMovement()
     {
         newGapVal = GetGaps();
-
-        //PositionHistory.Insert(0, transform.position);
         int index = 0;
-
         foreach (var body in BodyParts)
         {
             Vector3 point = PositionHistory[Mathf.Min(index * newGapVal, PositionHistory.Count - 1)];
             Vector3 moveDirection = point - body.transform.position;
             body.transform.position += moveDirection * MoveSpeed * Time.deltaTime;
-            
             body.transform.LookAt(point, -transform.forward);
-
-            NewBodyPoint = point;
             index++;
         }
 
         if(PositionHistory.Count > MaxPositionCount)
             PositionHistory.RemoveAt(MaxPositionCount);
+    }
+
+    public void TransparentSnake()
+    {
+        StartCoroutine(Transparent());
+    }
+
+    IEnumerator Transparent()
+    {
+        for (int i = 1; i < BodyParts.Count; ++i)
+        {
+            gameManager.ApplyTransparancy(BodyParts[i], ApplyTransparancy);
+            yield return null;
+        }
+        ApplyTransparancy = !ApplyTransparancy;
     }
 
     public void GrowSnake()
@@ -152,7 +165,7 @@ public class SnakeMovement : MonoBehaviour
         }
         else
         {
-            body = Instantiate(BodyPrefab, NewBodyPoint, Quaternion.identity);
+            body = Instantiate(BodyPrefab, BodyParts[BodyParts.Count - 1].transform.position, Quaternion.identity);
             body.tag = "Body";
         }
         BodyParts.Add(body);

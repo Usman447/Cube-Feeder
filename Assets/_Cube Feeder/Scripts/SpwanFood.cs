@@ -7,8 +7,8 @@ public class SpwanFood : MonoBehaviour
     public GameObject MeshObject;
 
     [Header("Food Types")]
-    public GameObject SimpleFood;
-    public GameObject PowerFood;
+    public GameObject[] SimpleFood;
+    public GameObject[] PowerFood;
 
     public int StartingFood = 20;
     public float FoodDepth = 1;
@@ -37,7 +37,7 @@ public class SpwanFood : MonoBehaviour
 
         if (Physics.Raycast(food.transform.position, food.transform.TransformDirection(Vector3.forward), out RaycastHit hit, Mathf.Infinity, layer))
         {
-            food.transform.rotation = Quaternion.FromToRotation(Vector3.forward, hit.normal);
+            food.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
 
             Vector3 targetPosition = hit.point;
             targetPosition += hit.normal * FoodDepth;
@@ -52,14 +52,18 @@ public class SpwanFood : MonoBehaviour
         Vector3 position = mesh.vertices[Random.Range(0, mesh.vertices.Length)];
         Vector3 normal = mesh.normals[Random.Range(0, mesh.vertices.Length)];
 
-        int randVal = Random.Range(0, 3);
-        if(randVal == 2)
+        int randVal = Random.Range(1, 8);
+        if(randVal == 3)
         {
-            return Instantiate(PowerFood, position, Quaternion.FromToRotation(Vector3.forward, normal));
+            return Instantiate(PowerFood[0], position, Quaternion.FromToRotation(Vector3.forward, normal));
+        }
+        else if (randVal == 4)
+        {
+            return Instantiate(PowerFood[1], position, Quaternion.FromToRotation(Vector3.forward, normal));
         }
         else
         {
-            return Instantiate(SimpleFood, position, Quaternion.FromToRotation(Vector3.forward, normal));
+            return Instantiate(SimpleFood[Random.Range(0, SimpleFood.Length)], position, Quaternion.FromToRotation(Vector3.forward, normal));
         }
     }
 
