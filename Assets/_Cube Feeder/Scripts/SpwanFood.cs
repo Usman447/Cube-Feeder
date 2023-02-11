@@ -8,7 +8,7 @@ public class SpwanFood : MonoBehaviour
 
     [Header("Food Types")]
     public GameObject[] SimpleFood;
-    public GameObject[] PowerFood;
+    public GameObject PowerFood;
 
     public ushort StartingFood = 20;
     public float FoodDepth = 1;
@@ -27,7 +27,7 @@ public class SpwanFood : MonoBehaviour
         Physics.queriesHitBackfaces = true;
         mesh = MeshObject.GetComponent<MeshFilter>().sharedMesh;
 
-        maxFoodCount = (ushort)(StartingFood - 3);
+        maxFoodCount = (ushort)(StartingFood - 2);
         maxPowerFoodCount = (ushort)(StartingFood - maxFoodCount);
 
 
@@ -39,7 +39,7 @@ public class SpwanFood : MonoBehaviour
 
     public void SpawnNewFood()
     {
-        StartCoroutine(SpawnFood());
+        StartCoroutine("SpawnFood");
     }
 
     IEnumerator SpawnFood()
@@ -62,7 +62,7 @@ public class SpwanFood : MonoBehaviour
     GameObject GetRandomFood()
     {
         Vector3 position = mesh.vertices[Random.Range(0, mesh.vertices.Length)];
-        Vector3 normal = mesh.normals[Random.Range(0, mesh.vertices.Length)];
+        Vector3 normal = mesh.normals[Random.Range(0, mesh.normals.Length)];
 
         GameObject food = null;
 
@@ -74,7 +74,12 @@ public class SpwanFood : MonoBehaviour
         else if(currentPowerFoods < maxPowerFoodCount)
         {
             currentPowerFoods++;
-            food = Instantiate(PowerFood[Random.Range(0, PowerFood.Length)], position, Quaternion.FromToRotation(Vector3.forward, normal));
+            food = Instantiate(PowerFood, position, Quaternion.FromToRotation(Vector3.forward, normal));
+        }
+        else
+        {
+            currentFoods++;
+            food = Instantiate(SimpleFood[Random.Range(0, SimpleFood.Length)], position, Quaternion.FromToRotation(Vector3.forward, normal));
         }
 
         return food;

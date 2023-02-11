@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System;
+using UnityEngine.SceneManagement;
 
 public class SnakeMovement : MonoBehaviour
 {
@@ -11,6 +13,7 @@ public class SnakeMovement : MonoBehaviour
     [SerializeField] int MaxPositionCount = 30000;
     [SerializeField] GameObject BodyPrefab;
     [SerializeField] GameObject HeadPrefab;
+    public float DestoryTimeDifference = 0.2f;
 
 
     [Header("Raycast")]
@@ -36,34 +39,44 @@ public class SnakeMovement : MonoBehaviour
     // Private Variables
     Vector3 moveDirection = Vector3.zero;
     Vector3 dir = Vector3.zero;
-    List<GameObject> BodyParts = new List<GameObject>();
-    List<Vector3> PositionHistory = new List<Vector3>();
-    GameManager gameManager;
-    SnakeHead snakeHead;
+    List<GameObject> BodyParts;
+    List<Vector3> PositionHistory;
+    public SpwanFood spawnFood { get; private set; }
 
     public int snakeBodySize { get; private set; } = 0;
     bool isFirst = true;
+    bool isDestory = false;
 
     private void Start()
     {
-        gameManager = FindObjectOfType<GameManager>();
+        spawnFood = FindObjectOfType<SpwanFood>();
+        BodyParts = new List<GameObject>();
+        PositionHistory = new List<Vector3>();
 
         GameObject body = Instantiate(HeadPrefab);
-        snakeHead = body.GetComponent<SnakeHead>();
         BodyParts.Add(body);
     }
 
     private void Update()
     {
-        dir = TouchMove.MoveDir;
-
-        if (dir.magnitude >= 0.999999f)
+        if (!isDestory)
         {
-            moveDirection = dir;
-        }
+            dir = TouchMove.MoveDir;
 
-        ContinuousMovement();
-        HandleBodyPartsMovement();
+            if (dir.magnitude >= 0.999999f)
+            {
+                moveDirection = dir;
+            }
+
+            ContinuousMovement();
+            HandleBodyPartsMovement();
+        }
+        else
+        {
+            if (destory1 && destory2)
+                SceneManager.LoadScene(0);
+
+        }
     }
 
 
@@ -137,20 +150,6 @@ public class SnakeMovement : MonoBehaviour
             PositionHistory.RemoveAt(MaxPositionCount);
     }
 
-    public void TransparentSnake()
-    {
-        StartCoroutine("Transparent");
-    }
-
-    IEnumerator Transparent()
-    {
-        for (int i = 1; i < BodyParts.Count; ++i)
-        {
-            gameManager.ApplyTransparancyOnBody(BodyParts[i]);
-            yield return null;
-        }
-    }
-
     public void AddSnakeBody()
     {
         GameObject body;
@@ -158,15 +157,15 @@ public class SnakeMovement : MonoBehaviour
         {
             body = Instantiate(BodyPrefab, transform.position, Quaternion.identity);
             body.tag = "First";
+            body.name = "Head";
             isFirst = false;
         }
         else
         {
             body = Instantiate(BodyPrefab, BodyParts[BodyParts.Count - 1].transform.position, Quaternion.identity);
             body.tag = "Body";
+            body.name = snakeBodySize.ToString();
         }
-
-        gameManager.ApplyTransparancyOnBody(body);
 
         BodyParts.Add(body);
         snakeBodySize++;
@@ -186,7 +185,60 @@ public class SnakeMovement : MonoBehaviour
                 isFirst = true;
         }
     }
+    public void SnakeEatFood()
+    {
+        AddSnakeBody();
+        if (spawnFood != null)
+        {
+            spawnFood.FoodEaten();
+            spawnFood.SpawnNewFood();
+        }
+    }
 
+    public void SnakeSizeDcrease()
+    {
+        SubstractSnakeBody();
+        if (spawnFood != null)
+        {
+            spawnFood.PowerFoodEaten();
+            spawnFood.SpawnNewFood();
+        }
+    }
+
+    bool destory1 = false, destory2 = false;
+
+    public void DestoryPlayer(int bodyCollisionIndex)
+    {
+        isDestory = true;
+        moveDirection = Vector3.zero;
+
+        StartCoroutine(ForwardDestruction(bodyCollisionIndex, BodyParts.Count));
+        StartCoroutine(BackwardDestruction(bodyCollisionIndex - 1, 1));
+    }
+
+    IEnumerator ForwardDestruction(int start, int end)
+    {
+        for (int i = start; i < end; ++i)
+        {
+            GameObject destroyBody = BodyParts[i];
+            //BodyParts.Remove(destroyBody);
+            Destroy(destroyBody);
+            yield return null;
+        }
+        destory1 = true;
+    }
+
+    IEnumerator BackwardDestruction(int start, int end)
+    {
+        for (int i = start; i >= end; --i)
+        {
+            GameObject destroyBody = BodyParts[i];
+            //BodyParts.Remove(destroyBody);
+            Destroy(destroyBody);
+            yield return null;
+        }
+        destory2 = true;
+    }
 
     int GetGaps()
     {
