@@ -74,9 +74,14 @@ public class SnakeMovement : MonoBehaviour
         else
         {
             if (destory1 && destory2)
-                SceneManager.LoadScene(0);
+                Invoke(nameof(ReturnToUIScene), 3f);
 
         }
+    }
+
+    void ReturnToUIScene()
+    {
+        SceneManager.LoadScene(0);
     }
 
 
@@ -213,7 +218,7 @@ public class SnakeMovement : MonoBehaviour
         moveDirection = Vector3.zero;
 
         StartCoroutine(ForwardDestruction(bodyCollisionIndex, BodyParts.Count));
-        StartCoroutine(BackwardDestruction(bodyCollisionIndex - 1, 1));
+        StartCoroutine(BackwardDestruction(bodyCollisionIndex - 1, 0));
     }
 
     IEnumerator ForwardDestruction(int start, int end)
