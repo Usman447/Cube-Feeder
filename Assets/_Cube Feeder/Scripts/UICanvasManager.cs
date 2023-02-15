@@ -19,7 +19,6 @@ public class UICanvasManager : MonoBehaviour
         scrollSnap = FindObjectOfType<SimpleScrollSnap>();
     }
 
-
     private void Update()
     {
         Swipe();
@@ -33,7 +32,23 @@ public class UICanvasManager : MonoBehaviour
     public void PlayButton()
     {
         Debug.Log("Button Pressed");
-        SceneManager.LoadScene(1);
+        StartCoroutine(LoadGameAsyncScene());
+    }
+
+    IEnumerator LoadGameAsyncScene()
+    {
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(1);
+        SaveDataToPassNext();
+        while (!asyncLoad.isDone)
+        {
+            Debug.Log(asyncLoad.progress);
+            yield return null;
+        }
+    }
+
+    void SaveDataToPassNext()
+    {
+        PlayerPrefs.SetInt("Character", scrollSnap.SelectedPanel);
     }
 
     void Swipe()

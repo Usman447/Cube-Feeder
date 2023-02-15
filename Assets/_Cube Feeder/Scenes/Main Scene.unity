@@ -318,6 +318,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FpsText: {fileID: 770713517}
   TargetFrameRate: 60
+  characters:
+    Heads:
+    - {fileID: 2937837129201639530, guid: a1b813ef2fd3e304f826d6b4f5058802, type: 3}
+    - {fileID: 3184241428432378529, guid: 01c33216b57ef2440a5814fa6aaff14b, type: 3}
+    Bodies:
+    - {fileID: 8548904919309819903, guid: 0cc03b9464f443540a3cae1a3244f4d0, type: 3}
+    - {fileID: 3915057401485612835, guid: 23378dbe6feef9945b3ad3b99d5b58b6, type: 3}
 --- !u!4 &80346298
 Transform:
   m_ObjectHideFlags: 0
@@ -1568,8 +1575,8 @@ MonoBehaviour:
   GapBetweenBodies: 16
   MoveSpeed: 7
   MaxPositionCount: 30000
-  BodyPrefab: {fileID: 3915057401485612835, guid: 23378dbe6feef9945b3ad3b99d5b58b6, type: 3}
-  HeadPrefab: {fileID: 3184241428432378529, guid: 01c33216b57ef2440a5814fa6aaff14b, type: 3}
+  BodyPrefab: {fileID: 0}
+  HeadPrefab: {fileID: 0}
   DestoryTimeDifference: 0.5
   groundLayer:
     serializedVersion: 2

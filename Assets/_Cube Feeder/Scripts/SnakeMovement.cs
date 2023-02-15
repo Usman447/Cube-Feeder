@@ -11,8 +11,8 @@ public class SnakeMovement : MonoBehaviour
     [SerializeField] int GapBetweenBodies = 12;
     [SerializeField] float MoveSpeed = 7f;
     [SerializeField] int MaxPositionCount = 30000;
-    [SerializeField] GameObject BodyPrefab;
-    [SerializeField] GameObject HeadPrefab;
+    public GameObject BodyPrefab;
+    public GameObject HeadPrefab;
     public float DestoryTimeDifference = 0.2f;
 
 
@@ -47,12 +47,15 @@ public class SnakeMovement : MonoBehaviour
     bool isFirst = true;
     bool isDestory = false;
 
-    private void Start()
+    private void Awake()
     {
         spawnFood = FindObjectOfType<SpwanFood>();
         BodyParts = new List<GameObject>();
         PositionHistory = new List<Vector3>();
+    }
 
+    private void Start()
+    {
         GameObject body = Instantiate(HeadPrefab);
         BodyParts.Add(body);
     }
