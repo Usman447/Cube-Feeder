@@ -6,32 +6,14 @@ using UnityEngine.Rendering;
 
 public class GameManager : MonoBehaviour
 {
-    [System.Serializable]
-    public class CharactersData
-    {
-        public GameObject[] Heads;
-        public GameObject[] Bodies;
+    public CharacterData[] characters;
 
-        public GameObject GetHead(int index)
-        {
-            return Heads[index];
-        }
-
-        public GameObject GetBody(int index)
-        {
-            return Bodies[index];
-        }
-
-    }
-
-
-
+    [Header("UI Stuff")]
+    public TextMeshProUGUI SnakeSize;
     public TextMeshProUGUI FpsText;
     public int TargetFrameRate = 60;
 
-    public CharactersData characters;
     SnakeMovement player;
-
 
     private void Awake()
     {
@@ -39,15 +21,21 @@ public class GameManager : MonoBehaviour
         player = FindObjectOfType<SnakeMovement>();
 
         int characterType = PlayerPrefs.GetInt("Character", 0);
-        player.BodyPrefab = characters.GetBody(characterType);
-        player.HeadPrefab = characters.GetHead(characterType);
+
+        player.BodyPrefab = characters[characterType].BodyPrefab;
+        player.HeadPrefab = characters[characterType].HeadPrefab;
+        player.Depth = characters[characterType].BodyDepth;
+        player.transform.position = characters[characterType].SpawnPosition;
+        player.GapBetweenBodies = characters[characterType].Gap;
     }
 
+    private void Start()
+    {
+        QualitySettings.SetQualityLevel(2, true);
+    }
 
     private void Update()
     {
-        Application.targetFrameRate = TargetFrameRate;
-
         int fpsVal = Mathf.RoundToInt((1 / Time.deltaTime));
         FpsText.text = fpsVal.ToString();
     }

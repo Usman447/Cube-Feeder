@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a131827a696f1a42abce228889536da, type: 3}
+  m_Name: Character 2
+  m_EditorClassIdentifier: 
+  HeadPrefab: {fileID: 3184241428432378529, guid: 01c33216b57ef2440a5814fa6aaff14b, type: 3}
+  BodyPrefab: {fileID: 3915057401485612835, guid: 23378dbe6feef9945b3ad3b99d5b58b6, type: 3}
+  SpawnPosition: {x: -2.3604076, y: 14.116813, z: 1.8773793}
+  BodyDepth: 0.87
+  Gap: 16

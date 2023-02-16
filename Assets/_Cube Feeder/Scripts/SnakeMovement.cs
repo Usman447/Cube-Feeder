@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 public class SnakeMovement : MonoBehaviour
 {
     [Header("Snake Setup")]
-    [SerializeField] int GapBetweenBodies = 12;
+    public int GapBetweenBodies = 12;
     [SerializeField] float MoveSpeed = 7f;
     [SerializeField] int MaxPositionCount = 30000;
     public GameObject BodyPrefab;
@@ -32,26 +32,23 @@ public class SnakeMovement : MonoBehaviour
     public float Depth = 1;
 
 
-    [Header("UI Stuff")]
-    [SerializeField] TextMeshProUGUI SnakeSize;
-
-
     // Private Variables
     Vector3 moveDirection = Vector3.zero;
     Vector3 dir = Vector3.zero;
     List<GameObject> BodyParts;
     List<Vector3> PositionHistory;
     public SpwanFood spawnFood { get; private set; }
-
     public int snakeBodySize { get; private set; } = 0;
     bool isFirst = true;
     bool isDestory = false;
+    GameManager gameManager;
 
     private void Awake()
     {
         spawnFood = FindObjectOfType<SpwanFood>();
         BodyParts = new List<GameObject>();
         PositionHistory = new List<Vector3>();
+        gameManager = FindObjectOfType<GameManager>();
     }
 
     private void Start()
@@ -177,7 +174,7 @@ public class SnakeMovement : MonoBehaviour
 
         BodyParts.Add(body);
         snakeBodySize++;
-        SnakeSize.text = snakeBodySize.ToString();
+        gameManager.SnakeSize.text = snakeBodySize.ToString();
     }
 
     public void SubstractSnakeBody()
@@ -188,11 +185,12 @@ public class SnakeMovement : MonoBehaviour
             BodyParts.Remove(destroyBody);
             Destroy(destroyBody, 0.5f);
             snakeBodySize--;
-            SnakeSize.text = snakeBodySize.ToString();
+            gameManager.SnakeSize.text = snakeBodySize.ToString();
             if (snakeBodySize <= 0)
                 isFirst = true;
         }
     }
+
     public void SnakeEatFood()
     {
         AddSnakeBody();

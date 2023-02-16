@@ -6,27 +6,15 @@ using DanielLochner.Assets.SimpleScrollSnap;
 
 public class UICanvasManager : MonoBehaviour
 {
+    public GameObject[] UISelectedCharacters;
+    public int currentSelectedCharacter = 0;
+
     SimpleScrollSnap scrollSnap;
-
-    public float swipeRange;
-    public float tapRange;
-
-    Vector2 startTouchPosition, currentPosition;
-    bool stopTouch = false;
 
     private void Start()
     {
         scrollSnap = FindObjectOfType<SimpleScrollSnap>();
-    }
-
-    private void Update()
-    {
-        Swipe();
-    }
-
-    public void OnCharacterSelected()
-    {
-        Debug.Log(scrollSnap.SelectedPanel);
+        QualitySettings.SetQualityLevel(3, true);
     }
 
     public void PlayButton()
@@ -38,7 +26,8 @@ public class UICanvasManager : MonoBehaviour
     IEnumerator LoadGameAsyncScene()
     {
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(1);
-        SaveDataToPassNext();
+        //SelectCharacter();
+        SelectEnvironment();
         while (!asyncLoad.isDone)
         {
             Debug.Log(asyncLoad.progress);
@@ -46,41 +35,25 @@ public class UICanvasManager : MonoBehaviour
         }
     }
 
-    void SaveDataToPassNext()
+    void SelectCharacter()
+    {
+        PlayerPrefs.SetInt("Character", currentSelectedCharacter);
+    }
+
+    void SelectEnvironment()
     {
         PlayerPrefs.SetInt("Character", scrollSnap.SelectedPanel);
     }
 
-    void Swipe()
+
+    public void OnSelectCharacterToggle(int index)
     {
-        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
+        if(index != currentSelectedCharacter)
         {
-            startTouchPosition = Input.GetTouch(0).position;
-        }
-
-        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Moved)
-        {
-            currentPosition = Input.GetTouch(0).position;
-            Vector2 Distance = currentPosition - startTouchPosition;
-
-            if (!stopTouch)
-            {
-                if (Distance.x < -swipeRange) // Left
-                {
-                    scrollSnap.GoToNextPanel();
-                    stopTouch = true;
-                }
-                else if (Distance.x > swipeRange) // Right
-                {
-                    scrollSnap.GoToPreviousPanel();
-                    stopTouch = true;
-                }
-            }
-        }
-
-        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended)
-        {
-            stopTouch = false;
+            UISelectedCharacters[currentSelectedCharacter].SetActive(false);
+            UISelectedCharacters[index].SetActive(true);
+            currentSelectedCharacter = index;
+            SelectCharacter();
         }
     }
 
